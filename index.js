@@ -5,7 +5,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const {mongo} = require("mongoose");
-const _ = require ("lodash");
+const _ = require("lodash");
 
 // Old code
 const app = express();
@@ -147,21 +147,19 @@ app.post("/delete", function (req, res) {
     const listName = req.body.listName;
 
     if (listName === "Today") {
-        setTimeout(() => {
-            // Action to be performed after the delay
-            Item.findByIdAndRemove(checkedItemId)
-                .then((removedItem) => {
-                    if (removedItem) {
-                    } else {
-                        console.log('Item not found');
-                    }
-                })
-                .catch((err) => {
-                    console.error(err);
-                    // Handle the error
-                });
-            res.redirect("/");
-        }, 300);
+        // Action to be performed after the delay
+        Item.findByIdAndRemove(checkedItemId)
+            .then((removedItem) => {
+                if (removedItem) {
+                } else {
+                    console.log('Item not found');
+                }
+            })
+            .catch((err) => {
+                console.error(err);
+                // Handle the error
+            });
+        res.redirect("/");
     } else {
         List.findOneAndUpdate({name: listName}, {$pull: {items: {_id: checkedItemId}}})
             .then(() => res.redirect(req.headers.referer))
