@@ -120,25 +120,31 @@ app.post("/", async function (req, res) {
     const listName = req.body.list;
     const itemName = req.body.newItem;
 
-    // Create new DB document
-    const item = new Item({
-        name: itemName
-    });
+    if (itemName.length > 0) {
+        // Create new DB document
+        const item = new Item({
+            name: itemName
+        });
 
-    if (listName === "Today") {
-        await item.save();
-        res.redirect("/");
-    } else {
-        try {
-            const foundList = await List.findOne({name: listName});
-            foundList.items.push(item);
-            await foundList.save();
-            res.redirect(req.headers.referer);
-        } catch (err) {
-            console.error(err);
-            res.status(500).send("An error occurred");
+        if (listName === "Today") {
+            await item.save();
+            res.redirect("/");
+        } else {
+            try {
+                const foundList = await List.findOne({name: listName});
+                foundList.items.push(item);
+                await foundList.save();
+                res.redirect(req.headers.referer);
+            } catch (err) {
+                console.error(err);
+                res.status(500).send("An error occurred");
+            }
         }
+    } else {
+        // Handle if tried to add blank string
+        console.log("forbidden");
     }
+
 });
 
 
