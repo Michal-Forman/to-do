@@ -1,5 +1,12 @@
 <%- include("header") -%>
 
+  <div class="box" id="navbar">
+    <a href="./drop"><img src="IMG/bin1.png" alt="bin" height="58px"></a>
+    <a href="./drop"><img src="IMG/list.png" alt="bin" height="58px"></a>
+    <a href="./drop"><img src="IMG/add_list.png" alt="bin" height="58px"></a>
+    <a href="./login"><img src="IMG/profile.png" alt="bin" height="58px"></a>
+  </div>
+
   <div class="box" id="heading">
     <h1> <%= listTitle %> </h1>
   </div>
@@ -8,7 +15,7 @@
     <% newListItems.forEach(function(Item){ %>
     <form action="/delete" method="post">
       <div class="item">
-        <input name ="checkbox" value="<%=Item._id%>" type="checkbox" onchange="this.form.submit()">
+        <input name ="checkbox" class="checkbox" value="<%=Item._id%>" type="checkbox" onchange="this.form.submit()">
         <p><%=  Item.name  %></p>
       </div>
       <input type="hidden" name="listName" value="<%= listTitle %>">
@@ -22,3 +29,5 @@
   </div>
 
 <%- include("footer") -%>
+
+
