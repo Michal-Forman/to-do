@@ -75,6 +75,13 @@ button {
   font-size: 30px;
   padding-bottom: 1px;
   border-width: 0;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+button:hover{
+  background-color: #F3DEBA;
+  color: #ABC4AA;
 }
 
 input[type="text"] {

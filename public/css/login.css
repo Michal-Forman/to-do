@@ -1,0 +1,64 @@
+body {
+    height: 100vh;
+}
+
+#container {
+    position: relative;
+    top: 50px;
+    background-color: #675D50;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 400px;
+    height: 240px;
+
+}
+
+input[type="password"] {
+    text-align: center;
+    height: 60px;
+    top: 10px;
+    border: none;
+    background: transparent;
+    font-size: 20px;
+    font-weight: 200;
+    width: 400px;
+}
+
+input[type="password"]:focus {
+    outline: none;
+    color: #F3DEBA;
+}
+
+input[type="text"] {
+    width: 400px;
+}
+
+button {
+    position: relative;
+    left: 20px;
+    min-width: 360px;
+    border-radius: 50px;
+}
+
+#login_heading {
+    position: relative;
+    top: 50px;
+    text-align: center;
+    text-align: center;
+}
+
+footer {
+    position: relative;
+    top: 50px;
+}
+
+a {
+    color: #F3DEBA;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #ABC4AA;
+}
