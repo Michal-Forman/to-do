@@ -10,6 +10,10 @@ body {
   margin-top: 0px;
 }
 
+img {
+  height: 58px;
+}
+
 h1 {
   color: #F3DEBA;
   padding: 10px;
@@ -63,7 +67,7 @@ form.item {
 
 button {
   min-height: 50px;
-  width: 50px;
+  min-width: 50px;
   border-radius: 50%;
   border-color: transparent;
   background-color: #ABC4AA;
@@ -119,6 +123,33 @@ footer {
   border-top-left-radius: 0px;
   border-top-right-radius: 0px;
   padding: 15px 50px;
+}
+
+@media (max-width: 600px) {
+  #navbar {
+    padding: 15px 20px;
+  }
+  img {
+    height: 32px;
+  }
+}
+
+@media (max-width: 420px) {
+  .box {
+    width: 80%;
+  }
+  input[type="text"] {
+      width: 75%;
+  }
+}
+
+@media (max-width: 340px) {
+  input[type="text"] {
+    width: 70%;
+  }
+  #navbar {
+    max-width: 100%;
+  }
 }
 
 
