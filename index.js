@@ -6,19 +6,73 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const {mongo} = require("mongoose");
 const _ = require("lodash");
+const session = require("express-session");
+const passport = require("passport");
+const localStrategy = require("passport-local").Strategy;
+const flash = require("connect-flash");
 
-// Old code
+// Set up express
 const app = express();
+
+// Set up flash
+app.use(flash());
+
+// Set up session middleware
+app.use(session({
+    secret: 'your-secret-key',
+    resave: false,
+    saveUninitialized: false
+}));
+
+// Initialize Passport.js
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Serialize user
+passport.serializeUser((user, done) => {
+    done(null, user.id);
+});
+
+// Deserialize user
+passport.deserializeUser((id, done) => {
+    User.findById(id)
+        .then((user) => {
+            done(null, user);
+        })
+        .catch((err) => {
+            done(err, null);
+        });
+});
 
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-/*// Connect to Database - old
-mongoose.connect("mongodb://127.0.0.1:27017/todolistDB")*/
+// Define the passport.js authentication strategy
+passport.use(new localStrategy({
+            usernameField: 'email',
+            passwordField: 'password'
+        },
+        async (email, password, done) => {
+            try {
+                const user = await User.findOne({email: email});
+                if (!user) {
+                    return done(null, false, {message: 'Incorrect email or password.'});
+                }
+                if (!user.isValidPassword(password)) {
+                    return done(null, false, {message: 'Incorrect email or password.'});
+                }
+                return done(null, user);
+            } catch (err) {
+                return done(err);
+            }
+        }
+    )
+);
 
-// Newly added
+
+// connect to MongoDB
 const PORT = process.env.PORT || 3000;
 mongoose.set("strictQuery", false);
 const connectDB = async () => {
@@ -31,44 +85,100 @@ const connectDB = async () => {
     }
 }
 
-// Create DB Schema
+// Items Schema
 const itemsSchema = {
     name: String
 };
 
-// Create DB Model
+// Items Model
 const Item = mongoose.model("item", itemsSchema);
 
-// Create DB Documents
-const item1 = new Item({
-    name: "First Action"
-});
+// Declare default items
+defaultItems = [];
 
-const defaultItems = [item1];
-
-// Custom list model
+// Custom list Schema
 const listSchema = {
     name: String,
     items: [itemsSchema]
 }
 
+// Custom list Model
 const List = mongoose.model("List", listSchema);
 
+// User Schema
+const userSchema = new mongoose.Schema({
+    email: String,
+    password: String
+});
+
+// Add isValidPassword method to the userSchema
+userSchema.methods.isValidPassword = function (password) {
+    // Compare the provided password with the stored password
+    return password === this.password;
+};
+
+// User Model
+const User = mongoose.model("User", userSchema);
+
+// Create first users
+async function createUser1() {
+    const existingUsers = await User.find({email: "miska.forman@gmail.com"});
+
+    if (existingUsers.length === 0) {
+        const user1 = new User({
+            email: "miska.forman@gmail.com",
+            password: "Miska123"
+        });
+
+        await user1.save();
+        console.log("User created successfully.");
+    } else {
+        console.log("User already exists.");
+    }
+}
+
+createUser1();
+
+async function createUser2() {
+    const existingUsers = await User.find({email: "miska.forman@gmail.com"});
+
+    if (existingUsers.length === 0) {
+        const user2 = new User({
+            email: "mforman@outlook.cz",
+            password: "Miska123"
+        });
+
+        await user2.save();
+        console.log("User created successfully.");
+    } else {
+        console.log("User already exists.");
+    }
+}
+
+createUser2();
+
 // Get Requests
-app.get("/", function (req, res) {
+app.get("/", isAuthenticated, function (req, res) {
     // DB.find() docs
     const query = Item.find({});
 
     // Execute the query and handle the result
     query.exec()
         .then((foundItems) => {
-                res.render("list", {listTitle: "Today", newListItems: foundItems});
+            res.render("list", {listTitle: "Today", newListItems: foundItems});
         })
         .catch((err) => {
             console.error(err);
             // Handle the error
         });
 });
+
+function isAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect('/login');
+}
 
 app.get('/drop', async (req, res) => {
     try {
@@ -87,8 +197,19 @@ app.get('/drop', async (req, res) => {
     }
 });
 
+app.post("/login", passport.authenticate("local", {
+    successRedirect: "/",
+    failureRedirect: "/login",
+    failureFlash: true
+}));
+
+app.get("/login", (req, res) => {
+    // Render the login form
+    res.render("login.ejs");
+});
 app.get("/:customListName", function (req, res) {
     const customListName = _.capitalize(req.params.customListName);
+    console.log("I am not in the corect page");
 
     List.findOne({name: customListName})
         .then((result) => {
@@ -179,10 +300,6 @@ app.get("/about", function (req, res) {
     res.render("about");
 });
 
-/* - old
-app.listen(3000, function () {
-    console.log("Server started on port 3000");
-});*/
 
 connectDB().then(() => {
     app.listen(PORT, () => {
