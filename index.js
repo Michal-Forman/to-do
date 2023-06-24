@@ -87,7 +87,11 @@ const connectDB = async () => {
 
 // Items Schema
 const itemsSchema = {
-    name: String
+    name: String,
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }
 };
 
 // Items Model
@@ -99,8 +103,12 @@ defaultItems = [];
 // Custom list Schema
 const listSchema = {
     name: String,
-    items: [itemsSchema]
-}
+    items: [itemsSchema],
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }
+};
 
 // Custom list Model
 const List = mongoose.model("List", listSchema);
@@ -137,8 +145,6 @@ async function createUser1() {
     }
 }
 
-createUser1();
-
 async function createUser2() {
     const existingUsers = await User.find({email: "miska.forman@gmail.com"});
 
@@ -155,23 +161,23 @@ async function createUser2() {
     }
 }
 
+createUser1();
 createUser2();
 
 // Get Requests
 app.get("/", isAuthenticated, function (req, res) {
-    // DB.find() docs
-    const query = Item.find({});
+    const userId = req.user._id;
 
-    // Execute the query and handle the result
-    query.exec()
+    Item.find({ user: userId })
         .then((foundItems) => {
-            res.render("list", {listTitle: "Today", newListItems: foundItems});
+            res.render("list", { listTitle: "Today", newListItems: foundItems });
         })
         .catch((err) => {
             console.error(err);
             // Handle the error
         });
 });
+
 
 function isAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
@@ -207,24 +213,23 @@ app.get("/login", (req, res) => {
     // Render the login form
     res.render("login.ejs");
 });
-app.get("/:customListName", function (req, res) {
+app.get("/:customListName", isAuthenticated, function (req, res) {
     const customListName = _.capitalize(req.params.customListName);
-    console.log("I am not in the corect page");
+    const userId = req.user._id;
 
-    List.findOne({name: customListName})
+    List.findOne({ name: customListName, user: userId })
         .then((result) => {
             if (result) {
-                res.render("list", {listTitle: result.name, newListItems: result.items});
-                // Handle the matching documents
+                res.render("list", { listTitle: result.name, newListItems: result.items });
             } else {
                 const list = new List({
                     name: customListName,
-                    items: defaultItems
-                })
+                    items: defaultItems,
+                    user: userId
+                });
 
                 list.save();
                 res.redirect(req.originalUrl);
-                // Handle when no documents match the criteria
             }
         })
         .catch((error) => {
@@ -232,14 +237,16 @@ app.get("/:customListName", function (req, res) {
         });
 });
 
+
 app.post("/", async function (req, res) {
     const listName = req.body.list;
     const itemName = req.body.newItem;
+    const userId = req.user._id;
 
     if (itemName.length > 0) {
-        // Create new DB document
         const item = new Item({
-            name: itemName
+            name: itemName,
+            user: userId
         });
 
         if (listName === "Today") {
@@ -247,7 +254,7 @@ app.post("/", async function (req, res) {
             res.redirect("/");
         } else {
             try {
-                const foundList = await List.findOne({name: listName});
+                const foundList = await List.findOne({ name: listName, user: userId });
                 foundList.items.push(item);
                 await foundList.save();
                 res.redirect(req.headers.referer);
@@ -257,12 +264,12 @@ app.post("/", async function (req, res) {
             }
         }
     } else {
-        // Handle if tried to add blank string
+        // Handle if tried to add a blank string
         console.log("forbidden");
         res.redirect(req.headers.referer);
     }
-
 });
+
 
 
 app.post("/delete", function (req, res) {
