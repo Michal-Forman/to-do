@@ -41,18 +41,10 @@ const Item = mongoose.model("item", itemsSchema);
 
 // Create DB Documents
 const item1 = new Item({
-    name: "Welcome to your to-do list"
+    name: "First Action"
 });
 
-const item2 = new Item({
-    name: "Hit plus button to add a Item"
-});
-
-const item3 = new Item({
-    name: "<-- Hit this to delete a Item"
-});
-
-const defaultItems = [item1, item2, item3];
+const defaultItems = [item1];
 
 // Custom list model
 const listSchema = {
@@ -70,26 +62,29 @@ app.get("/", function (req, res) {
     // Execute the query and handle the result
     query.exec()
         .then((foundItems) => {
-            // Access the foundItems array here
-            // Check if any data exists
-            if (foundItems.length === 0) {
-                // Insert Array to DB
-                Item.insertMany(defaultItems)
-                    .then(function () {
-                        console.log("Successfully saved defult items to DB");
-                    })
-                    .catch(function (err) {
-                        console.log(err);
-                    });
-                res.redirect("/");
-            } else {
                 res.render("list", {listTitle: "Today", newListItems: foundItems});
-            }
         })
         .catch((err) => {
             console.error(err);
             // Handle the error
         });
+});
+
+app.get('/drop', async (req, res) => {
+    try {
+        // Drop the "lists" collection
+        await mongoose.connection.dropCollection('lists');
+        console.log('Dropped "lists" collection');
+
+        // Drop the "items" collection
+        await mongoose.connection.dropCollection('items');
+        console.log('Dropped "items" collection');
+
+        res.redirect("/");
+    } catch (err) {
+        console.log('Error dropping collections:', err);
+        res.status(500).send('An error occurred');
+    }
 });
 
 app.get("/:customListName", function (req, res) {
@@ -143,6 +138,7 @@ app.post("/", async function (req, res) {
     } else {
         // Handle if tried to add blank string
         console.log("forbidden");
+        res.redirect(req.headers.referer);
     }
 
 });
