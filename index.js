@@ -115,6 +115,8 @@ const List = mongoose.model("List", listSchema);
 
 // User Schema
 const userSchema = new mongoose.Schema({
+    firstName: String,
+    lastName: String,
     email: String,
     password: String
 });
@@ -134,6 +136,8 @@ async function createUser1() {
 
     if (existingUsers.length === 0) {
         const user1 = new User({
+            firstName: "Miska",
+            lastName: "Forman",
             email: "miska.forman@gmail.com",
             password: "Miska123"
         });
@@ -150,6 +154,8 @@ async function createUser2() {
 
     if (existingUsers.length === 0) {
         const user2 = new User({
+            firstName: "m",
+            lastName: "Forman",
             email: "mforman@outlook.cz",
             password: "Miska123"
         });
@@ -209,6 +215,43 @@ app.post("/login", passport.authenticate("local", {
     failureFlash: true
 }));
 
+app.get("/register", (req, res) => {
+    res.render("register");
+});
+
+app.post("/register", async (req, res) => {
+    const { firstName, lastName, email, password } = req.body;
+
+    try {
+        // Check if a user with the provided email already exists
+        const existingUser = await User.findOne({ email: email });
+
+        if (existingUser) {
+            // User with the provided email already exists
+            // Handle the error or display an appropriate message
+            console.log("User already exists");
+            return res.redirect("/register");
+        }
+
+        // Create a new user
+        const newUser = new User({
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            password: password
+        });
+
+        // Save the new user to the database
+        await newUser.save();
+
+        // Redirect to the login page or any other desired page
+        res.redirect("/login");
+    } catch (err) {
+        console.error(err);
+        // Handle the error or display an appropriate message
+        res.redirect("/register");
+    }
+});
 app.get("/login", (req, res) => {
     // Render the login form
     res.render("login.ejs");
