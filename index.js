@@ -192,19 +192,21 @@ function isAuthenticated(req, res, next) {
     res.redirect('/login');
 }
 
-app.get('/drop', async (req, res) => {
-    try {
-        // Drop the "lists" collection
-        await mongoose.connection.dropCollection('lists');
-        console.log('Dropped "lists" collection');
+app.get('/drop', isAuthenticated, async (req, res) => {
+    const userId = req.user._id;
 
-        // Drop the "items" collection
-        await mongoose.connection.dropCollection('items');
-        console.log('Dropped "items" collection');
+    try {
+        // Delete items associated with the user
+        await Item.deleteMany({ user: userId });
+        console.log('Dropped items associated with the user');
+
+        // Delete lists associated with the user
+        await List.deleteMany({ user: userId });
+        console.log('Dropped lists associated with the user');
 
         res.redirect("/");
     } catch (err) {
-        console.log('Error dropping collections:', err);
+        console.log('Error dropping items and lists:', err);
         res.status(500).send('An error occurred');
     }
 });
