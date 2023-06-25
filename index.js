@@ -281,6 +281,29 @@ app.get("/logout", (req, res) => {
 app.get("/change_password", isAuthenticated, (req, res) => {
     res.render("change_password");
 });
+app.post("/change_password", isAuthenticated, async (req, res) => {
+    try {
+        const user = req.user;
+        const { oldPassword, newPassword } = req.body;
+
+        // Verify the old password
+        if (!user.isValidPassword(oldPassword)) {
+            console.log(oldPassword);
+            console.log("Old password is not correct");
+            return res.redirect("/change_password");
+        }
+
+        // Update the password
+        user.password = newPassword;
+        await user.save();
+        res.redirect("/profile");
+    } catch (err) {
+        console.error(err);
+        // Handle the error or display an appropriate message
+        res.redirect("/change_password");
+    }
+});
+
 app.get("/:customListName", isAuthenticated, function (req, res) {
     const customListName = _.capitalize(req.params.customListName);
     const userId = req.user._id;
