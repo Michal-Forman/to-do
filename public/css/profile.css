@@ -1,0 +1,75 @@
+#profile_heading {
+    position: relative;
+    top: 50px;
+    text-align: center;
+    text-align: center;
+}
+
+#container {
+    height: 340px;
+    display: flex;
+    justify-content: start;
+}
+
+h2 {
+    color: #F3DEBA;
+    margin-bottom: 0;
+}
+
+h3 {
+    margin-top: 10px;
+    margin-bottom: 0;
+    color: grey;
+    font-weight: normal;
+}
+
+#change_password_button {
+    color: darkred;
+    transition: color 0.3s ease;
+}
+
+#change_password_button:hover {
+    color: red;
+}
+
+#logout {
+    position: relative;
+    color: darkred;
+    transition: color 0.3s ease;
+    justify-self: end;
+    transition: color 0.3s ease;
+}
+
+#logout:hover {
+    color: red;
+}
+
+#home {
+    position: relative;
+    color: #ABC4AA;
+    transition: color 0.3s ease;
+}
+
+#home:hover {
+    color: #F3DEBA;
+}
+
+.profile_section {
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #A9907E;
+}
+
+.last_profile_section {
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+

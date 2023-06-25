@@ -254,9 +254,32 @@ app.post("/register", async (req, res) => {
         res.redirect("/register");
     }
 });
+
+app.get("/profile" , isAuthenticated, (req, res) => {
+    const userId = req.user._id;
+
+    Item.find({ user: userId })
+        .then((foundItems) => {
+            res.render("profile", {firstName: req.user.firstName , lastName: req.user.lastName, email: req.user.email, password: req.user.password});
+        });
+});
 app.get("/login", (req, res) => {
     // Render the login form
     res.render("login.ejs");
+});
+app.get("/logout", (req, res) => {
+    req.logout(function(err) {
+        if (err) {
+            console.log(err);
+        }
+    }); // This will log out the user
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+    res.redirect("/");
+});
+app.get("/change_password", isAuthenticated, (req, res) => {
+    res.render("change_password");
 });
 app.get("/:customListName", isAuthenticated, function (req, res) {
     const customListName = _.capitalize(req.params.customListName);

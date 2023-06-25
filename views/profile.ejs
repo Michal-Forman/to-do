@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <title>To Do List</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/register.css">
+    <link rel="stylesheet" href="css/profile.css">
+</head>
+
+<body>
+
+<div class="box" id="profile_heading">
+    <h1><%= firstName%> <%= lastName%></h1>
+</div>
+
+<div id="container" class="box">
+    <div class=profile_section>
+        <h2>Email</h2>
+        <h3><%= email%></h3>
+    </div>
+    <div class="profile_section">
+        <h2>Password</h2>
+        <% const firstTwoChars = password.substring(0, 2); %>
+        <% const remainingChars = password.substring(2); %>
+        <% const truncatedPassword = firstTwoChars + "●".repeat(remainingChars.length); %>
+        <h3><%= truncatedPassword%></h3>
+        <a href="/change_password"><h3 id="change_password_button">Change Password</h3></a>
+    </div>
+    <div class="last_profile_section">
+        <a href="/logout"><h2 id="logout">Log out</h2></a>
+        <a href="/"><h2 id="home">Home</h2></a>
+    </div>
+
+
+</div>
+
+<%- include("footer") -%>
