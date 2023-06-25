@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <title>To Do List</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/register.css">
+    <link rel="stylesheet" href="css/profile.css">
+    <link rel="stylesheet" href="css/change_password.css">
+    <link rel="stylesheet" href="css/lists.css">
+</head>
+
+<div class="box" id="login_heading">
+    <h1> Your Lists </h1>
+</div>
+<div class="box">
+    <ul>
+        <% lists.forEach(function(list) { %>
+            <li><a href="/<%= list.name %>"><h2><%= list.name %></h2></a></li>
+        <% }); %>
+        <li><a href="/"><h2>Today</h2></a></li>
+    </ul>
+</div>
+
+
+<%- include("footer") -%>

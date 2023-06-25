@@ -192,6 +192,10 @@ function isAuthenticated(req, res, next) {
     res.redirect('/login');
 }
 
+app.get("/favicon.ico", (req, res) => {
+    res.status(204).end();
+});
+
 app.get('/drop', isAuthenticated, async (req, res) => {
     const userId = req.user._id;
 
@@ -301,6 +305,53 @@ app.post("/change_password", isAuthenticated, async (req, res) => {
         console.error(err);
         // Handle the error or display an appropriate message
         res.redirect("/change_password");
+    }
+});
+
+app.get("/add_list", isAuthenticated, (req, res) => {
+    res.render("add_list");
+});
+
+app.post("/add_list", isAuthenticated, async (req, res) => {
+    const listName = req.body.listName;
+    const userId = req.user._id;
+
+    try {
+        const existingList = await List.findOne({ name: listName, user: userId });
+
+        if (existingList) {
+            // A list with the provided name already exists
+            // Handle the error or display an appropriate message
+            console.log("List already exists");
+            return res.redirect("/add_list");
+        }
+
+        const newList = new List({
+            name: listName,
+            items: [],
+            user: userId
+        });
+
+        await newList.save();
+        res.redirect("/lists");
+    } catch (err) {
+        console.error(err);
+        // Handle the error or display an appropriate message
+        res.redirect("/add_list");
+    }
+});
+
+
+app.get("/lists", isAuthenticated, async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const lists = await List.find({ user: userId });
+
+        res.render("lists", { lists: lists });
+    } catch (err) {
+        console.error(err);
+        // Handle the error or display an appropriate message
+        res.redirect("/");
     }
 });
 

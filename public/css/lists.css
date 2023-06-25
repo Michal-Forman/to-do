@@ -1,0 +1,9 @@
+ul {
+    list-style: none;
+    padding: 10px;
+}
+
+.box {
+    position: relative;
+    top: 50px;
+}
