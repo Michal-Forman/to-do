@@ -159,4 +159,16 @@ footer {
   }
 }
 
+.slide-up {
+  transform: translateY(100%);
+  transition: transform 0.3s ease-in-out;
+}
+
+img {
+  transition: transform 0.3s ease;
+}
+
+img:hover {
+  transform: scale(1.2);
+}
 
