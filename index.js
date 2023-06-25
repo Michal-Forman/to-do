@@ -313,7 +313,7 @@ app.get("/add_list", isAuthenticated, (req, res) => {
 });
 
 app.post("/add_list", isAuthenticated, async (req, res) => {
-    const listName = req.body.listName;
+    const listName = _.capitalize(req.body.listName);
     const userId = req.user._id;
 
     try {

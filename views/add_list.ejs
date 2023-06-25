@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <title>To Do List</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/register.css">
+    <link rel="stylesheet" href="css/profile.css">
+    <link rel="stylesheet" href="css/change_password.css">
+    <link rel="stylesheet" href="css/lists.css">
+    <link rel="stylesheet" href="css/add_list.css">
+</head>
+
+<body>
+
+<div class="box" id="add_list_heading">
+    <h1> Add List </h1>
+</div>
+
+<div class="box" id="container">
+    <form action="/add_list" method="POST">
+        <input type="text" name="listName" placeholder="Enter list name" autocomplete="off" required>
+        <button type="submit">Add List</button>
+    </form>
+    <a href="/"><h2>Go Back</h2></a>
+</div>
+
+
+<%- include("footer") -%>

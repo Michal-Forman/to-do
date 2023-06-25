@@ -7,3 +7,12 @@ ul {
     position: relative;
     top: 50px;
 }
+
+h2 {
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+#container {
+    height: 150px;
+}

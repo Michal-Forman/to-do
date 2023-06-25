@@ -12,9 +12,12 @@
     <link rel="stylesheet" href="css/lists.css">
 </head>
 
+<body>
+
 <div class="box" id="login_heading">
     <h1> Your Lists </h1>
 </div>
+
 <div class="box">
     <ul>
         <% lists.forEach(function(list) { %>
@@ -24,5 +27,10 @@
     </ul>
 </div>
 
+<script>
+    window.onload = function() {
+        document.body.classList.remove("hide-content");
+    };
+</script>
 
 <%- include("footer") -%>
